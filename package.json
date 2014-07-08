@@ -1,0 +1,27 @@
+{
+  "name": "Gulp integrated in Pattern Lab",
+  "version": "0.0.0",
+  "author": "Tim Hartmann <hartmann@neoskop.de>",
+  "description": "Description",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "devDependencies": {
+    "gulp": "^3.8.5",
+    "gulp-bump": "^0.1.10",
+    "gulp-clean": "^0.3.1",
+    "gulp-concat": "^2.2.0",
+    "gulp-connect": "^2.0.5",
+    "gulp-cssmin": "^0.1.6",
+    "gulp-filter": "^0.5.0",
+    "gulp-git": "^0.4.3",
+    "gulp-if": "^1.2.1",
+    "gulp-imagemin": "^0.6.1",
+    "gulp-rename": "^1.2.0",
+    "gulp-sass": "^0.5.0",
+    "gulp-shell": "^0.2.7",
+    "gulp-tag-version": "^1.0.2",
+    "gulp-uglify": "^0.3.1"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Gulp integrated in Pattern Lab",
+  "version": "0.0.0",
+  "ignore": [
+    ".jshintrc",
+    ".editorconfig",
+    ".gitignore",
+    ".bowerrc",
+    "**/*.txt"
+  ]
+}

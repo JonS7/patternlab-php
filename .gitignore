@@ -1,7 +1,49 @@
-.DS_Store
+# Ignore hidden folders
+# This takes care of .tmp, .sass-cache, and many others #
+.*/
+
+# Ignore OS generated files
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+Desktop.ini
+
+# Thumbnail cache files
+._*
+Thumbs.db
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
+
+# TextMate
+*.tmproj
+*.tm_properties
+tmtags
+
+# Espresso Project Files
+*.esproj
+*.espressostorage
+
+# Sublime Text
+*.sublime-workspace
+
+# Sass
+.sass-cache
+
+# Node
+node_modules
+npm-debug.log
+
+# Bower
+source/assets/components
+
+# Pattern Lab public folder
 public/*
-source/*
-config.ini
-latest-change.txt
-*-ck.js
-*.sass-cache/
+
+# Do not ignore .gitkeep in ignored directories
+!.gitkeep
+
+
+

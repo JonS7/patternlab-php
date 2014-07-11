@@ -20,7 +20,9 @@
 -----------
 
 
-Patternlab doesn't take over the asset-handling, that is really good. We can handle it. Because of this we decide to use [Gulpjs](http://gulpjs.com/) as a streaming build system, which will handle the assets. It's super fast and easy to configurate.
+Patternlab doesn't take over the asset-handling, that's really good and you can handle it by yourself. Because of this we recommend to use [Gulpjs](http://gulpjs.com/) as a streaming build system, which will handle the assets. It's fast and easy to configurate.
+
+### Features:
 
 * Sass-Compiling (Libsass)
 * Server (Gulp-Connect)
@@ -36,17 +38,17 @@ Patternlab doesn't take over the asset-handling, that is really good. We can han
 <a name="gulp-start">Start development</a>
 -----------
 
-After you cloned the project, you must follow some simple steps before you can start with development. Follow this short instruction:
+After you cloned the project, you must follow some simple steps before you can start developing. Follow this short instruction:
 
 ```
 // Install gulp
-sudo npm install gulp -g
+$ npm install gulp -g
 
 // Install dependencies
-npm install
+$ npm install
 
-// Start server
-gulp serve
+// Start server and run Pattern Lab
+$ gulp serve
 
 // Open project in your browser
 http://localhost:8080
@@ -55,7 +57,7 @@ http://localhost:8080
 <a name="gulp-path-handling">Path-Handling</a>
 -----------
 
-Extracting the paths from the streams were important for us. You can customize it without to have the bunch of tasks around it.
+Extracting the paths from the streams were important. You can customize it, so you don't have the bunch of tasks around it.
 
 ```
 // Contain all base folders for each type of asset
@@ -65,22 +67,23 @@ var basePaths;
 var appFiles;
 ```
 
-You find a variable called ```production```. This is for cut the workflow into two sections - one for ongoing development-process and the other one for releasing / minifing stuff.
+You find a variable called ```production```. It's necessary to cut the workflow in two sections - one for ongoing development-process and the other one for releasing / minifing stuff.
 
-In the tasks where you need minifing you must set the variable to true, otherwise set it to false.
+In a gulp-task where you need to minify some stuff, set the variable to true.
 
 <a name="gulp-releasing">Releasing / Deployment with Gulp</a>
 -----------
 
 Versioning is important in your styleguide, specially when you talk with your co-workers about it.
 
-After you finished a version, then you must release it. The good point is, that all files will publish to your remote repository at github, bitbucket or whatever is your endpoint. This is not all: It will deploy all files in `public` to a server, which you defin in the gulpfile.
+After you finished a version, you have to release it. The good point is, that all files will publish to your remote repository at github, bitbucket or whatever is your endpoint. This is not all: It will deploy all files in `public` to a server, which you define in the gulpfile.
 
 * Bump up the number in your json's (default: package.json & bower.json)
 * Create tag
 * Push all with tags to endpoint (Github, Bitbucket, etc.)
 * Deploy files to a server
 
+### Release-Tasks
 ```
 // x.x.1
 gulp release --type patch
@@ -90,6 +93,33 @@ gulp release --type minor
 
 // 1.x.x
 gulp release --type major
+```
+
+### Config for deployment
+```
+// Config for deployment
+var deployment = {
+  
+  // Local working path
+  local: {
+    path: 'public'
+  },
+
+  // Url to server
+  remote: {
+    host: 'blg@frontend.neostage.de:public_html',
+  },
+
+  // Bash for deployment via rsync
+  rsync: {
+    options: '-avzh --delete -e ssh'
+  }
+}
+```
+It's super simple to deploy all you files to the server. Type this in the terminal:
+
+```
+$ gulp deploy
 ```
 
 <a name="todos">Todos</a>

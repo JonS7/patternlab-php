@@ -5,15 +5,16 @@
 
 1. [Gulp-Integration](#gulp-integration)
 2. [Start development with Gulp](#gulp-start)
-3. [Handling paths in Gulp](#gulp-path-handling)
-4. [Gulp-Releasing](#gulp-releasing)
-7. [Todos](#todos)
-8. [About Pattern Lab](#gulp-integration)
-9. [Demo](#gulp-start)
-10. [Getting Started](#getting-started)
-11. [Working with Patterns](#working-with-patterns)
-12. [Creating & Working With Dynamic Data for a Pattern](#working-with-data)
-13. [Using Pattern Lab's Advanced Features](#advanced-features)
+3. [Config File](#gulp-path-handling)
+4. [Handle specific tasks with a variable](#gulp-production-variable)
+5. [Gulp-Releasing](#gulp-releasing)
+6. [Todos](#todos)
+7. [About Pattern Lab](#gulp-integration)
+8. [Demo](#gulp-start)
+9. [Getting Started](#getting-started)
+10. [Working with Patterns](#working-with-patterns)
+11. [Creating & Working With Dynamic Data for a Pattern](#working-with-data)
+12. [Using Pattern Lab's Advanced Features](#advanced-features)
 
 
 <a name="gulp-integration">Gulp-Integration</a>
@@ -25,7 +26,7 @@ Patternlab doesn't take over the asset-handling, that's really good and you can 
 ### Features:
 
 * Sass-Compiling (Libsass)
-* Server (Gulp-Connect)
+* Server (Browser-Sync)
 * Livereload
 * Minify (Javascript, CSS and images)
 * Releasing / Deployment
@@ -35,7 +36,7 @@ Patternlab doesn't take over the asset-handling, that's really good and you can 
   * Push files via rsync to a server
 
 
-<a name="gulp-start">Start development</a>
+<a name="gulp-start">Start development with Gulp</a>
 -----------
 
 After you cloned the project, you must follow some simple steps before you can start developing. Follow this short instruction:
@@ -49,27 +50,45 @@ $ npm install
 
 // Start server and run Pattern Lab
 $ gulp serve
-
-// Open project in your browser
-http://localhost:8080
 ```
 
-<a name="gulp-path-handling">Path-Handling</a>
+<a name="gulp-path-handling">Config-File</a>
 -----------
 
-Extracting the paths from the streams were important. You can customize it, so you don't have the bunch of tasks around it.
+So we take of the paths to an own config file called `build.config.json`. It's easier to maintain and extract the data from the logic. It's only **JSON**, so we think you know how you can handle it.
+
+
+<a name="gulp-production-variable">Handle specific tasks with a variable</a>
+-----------
+
+It's important to minify some stuff for a better performance. But mostly these kind of tasks need a lot of time and can be annoy us during the development. We need these only if we build a dist version.
+
+The variable `production` is false. If you need the specific tasks, so set it to true. A task can be look like this one:
 
 ```
-// Contain all base folders for each type of asset
-var basePaths;
+// Variable (Trigger) to handle some tasks
+var production;
 
-// Contain files
-var appFiles;
+// Task for Images with Gulpif for Imagemin
+gulp.task('images', function () {
+  return gulp.src('**/*.img')
+    .pipe(gulpif(production, imagemin()))
+    .pipe(gulp.dest(
+      'build/images/'
+    ))
+});
+
+// Images won't minify, because the value is false
+gulp.task('build', function () {
+  production = false;
+
+  gulp.start(
+    'images'
+  );
+});
+
 ```
 
-You find a variable called ```production```. It's necessary to cut the workflow in two sections - one for ongoing development-process and the other one for releasing / minifing stuff.
-
-In a gulp-task where you need to minify some stuff, set the variable to true.
 
 <a name="gulp-releasing">Releasing / Deployment with Gulp</a>
 -----------
@@ -96,23 +115,21 @@ gulp release --type major
 ```
 
 ### Config for deployment
+
+It's easy to deploy all the code to a server. You don't must copy something per hand. It's one line in your terminal. In the `build.config.json` you can type in the data for the server. Currently it looks like this one:
+
 ```
-// Config for deployment
-var deployment = {
-  
-  // Local working path
-  local: {
-    path: 'public'
+// Data for deployment
+// File: build.config.json
+"deployment": {
+  "local": {
+    "path": "public"
   },
-
-  // Url to server
-  remote: {
-    host: 'blg@frontend.neostage.de:public_html',
+  "remote": {
+    "host": "YOUR HOST"
   },
-
-  // Bash for deployment via rsync
-  rsync: {
-    options: '-avzh --delete -e ssh'
+  "rsync": {
+    "options": "-avzh --delete -e ssh"
   }
 }
 ```
@@ -125,7 +142,7 @@ $ gulp deploy
 <a name="todos">Todos</a>
 -----------
 
-* Integration of Browsersync
+* ~~Integration of Browsersync~~
 
 <a name="about">About Pattern Lab</a>
 -----------

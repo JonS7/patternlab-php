@@ -8,113 +8,32 @@
     Required plugins
 -------------------------------------------------------------------*/
 
-var gulp       = require('gulp'),
-    bump       = require('gulp-bump'),
-    clean      = require('gulp-clean'), // TODO: uss gulp-rimraf https://www.npmjs.org/package/gulp-rimraf
-    concat     = require('gulp-concat'),
-    connect    = require('gulp-connect'),
-    cssmin     = require('gulp-cssmin'),
-    filter     = require('gulp-filter'),
-    git        = require('gulp-git'),
-    gulpif     = require('gulp-if'),
-    imagemin   = require('gulp-imagemin'),
-    rename     = require('gulp-rename'),
-    sass       = require('gulp-sass'),
-    shell      = require('gulp-shell'),
-    tagversion = require('gulp-tag-version'),
-    uglify     = require('gulp-uglify');
+var gulp        = require('gulp'),
+    bump        = require('gulp-bump'),
+    clean       = require('gulp-clean'), // TODO: uss gulp-rimraf https://www.npmjs.org/package/gulp-rimraf
+    concat      = require('gulp-concat'),
+    browserSync = require('browser-sync'),
+    cssmin      = require('gulp-cssmin'),
+    filter      = require('gulp-filter'),
+    git         = require('gulp-git'),
+    gulpif      = require('gulp-if'),
+    imagemin    = require('gulp-imagemin'),
+    rename      = require('gulp-rename'),
+    sass        = require('gulp-sass'),
+    shell       = require('gulp-shell'),
+    tagversion  = require('gulp-tag-version'),
+    uglify      = require('gulp-uglify'),
+    config      = require('./build.config.json');
 
 
 /*-------------------------------------------------------------------
     Configuration
 -------------------------------------------------------------------*/
 
-// Deployment Parameters
-// Description: Set parameters for deployment and rsync
-// Note: rsync has to be installed on remote host
-var deployment = {
-  local: {
-    path: 'public'
-  },
-  remote: {
-    host: 'YOUR HOST',
-  },
-  rsync: {
-    options: '-avzh --delete -e ssh'
-  }
-}
-
 // Production Handling
 // Description: Use 'production' variable with 'gulpif'
 // to minify and optimize assets for production
 var production;
-
-// Base Paths
-// Description: Set base and destination paths
-var basePaths = {
-  assets: {
-    base: 'source/assets/',
-    dest: 'public/assets/'
-  },
-  scripts: {
-    base: 'source/assets/javascripts/',
-    dest: 'public/assets/javascripts/'
-  },
-  components: {
-    base: 'source/assets/components/',
-  },
-  scss: {
-    base: 'source/assets/scss/',
-    dest: 'public/assets/stylesheets/'
-  },
-  fonts: {
-    base: 'source/assets/fonts/',
-    dest: 'public/assets/fonts/'
-  },
-  images: {
-    base: 'source/assets/images/',
-    dest: 'public/assets/images/'
-  },
-  dummies: {
-    base: 'source/dummies/',
-    dest: 'public/dummies/'
-  }
-};
-
-
-// Application Files
-// Description: Set applications files and paths
-var appFiles = {
-  versioning: [
-    './package.json',
-    './bower.json'
-  ],
-  scripts:
-    basePaths.scripts.base + '**/*.js',
-
-  components:[
-
-  ],
-
-  scss: [
-    basePaths.scss.base + '**/*.scss'
-  ],
-
-  fonts:
-    basePaths.fonts.base + '**/*',
-
-  images:
-    basePaths.images.base + '**/*',
-
-  dummies:
-    basePaths.dummies.base + '**/*',
-
-  patternlab: [
-    'source/_patterns/**/*.mustache',
-    'source/_patterns/**/*.json',
-    'source/_data/*.json'
-  ]
-};
 
 
 /*-------------------------------------------------------------------
@@ -125,7 +44,7 @@ var appFiles = {
 // Description: Removing assets files before running other tasks
 gulp.task('clean:before', function () {
   return gulp.src(
-    basePaths.assets.dest
+    config.assets.dest
   )
     .pipe(clean({
       force: true
@@ -135,7 +54,7 @@ gulp.task('clean:before', function () {
 
 // Task: Handle scripts
 gulp.task('scripts', function () {
-  return gulp.src(appFiles.scripts)
+  return gulp.src(config.scripts.files)
     .pipe(concat(
       'application.js'
     ))
@@ -144,75 +63,85 @@ gulp.task('scripts', function () {
       suffix: '.min'
     })))
     .pipe(gulp.dest(
-      basePaths.scripts.dest
+      config.scripts.dest
     ))
-    .pipe(connect.reload());
+    .pipe(browserSync.reload({stream:true}));
 });
 
 
 // Task: Handle fonts
 gulp.task('fonts', function () {
-  return gulp.src(appFiles.fonts)
+  return gulp.src(config.fonts.files)
     .pipe(gulp.dest(
-      basePaths.fonts.dest
+      config.fonts.dest
     ))
-    .pipe(connect.reload());
+    .pipe(browserSync.reload({stream:true}));
 });
 
 
 // Task: Handle images
 gulp.task('images', function () {
-  return gulp.src(appFiles.images)
+  return gulp.src(config.images.files)
     .pipe(gulpif(production, imagemin()))
     .pipe(gulp.dest(
-      basePaths.images.dest
+      config.images.dest
     ))
-    .pipe(connect.reload());
+    .pipe(browserSync.reload({stream:true}));
 });
 
 // Task: Handle images
 gulp.task('dummies', function () {
-  return gulp.src(appFiles.dummies)
+  return gulp.src(config.dummies.files)
     .pipe(gulpif(production, imagemin()))
     .pipe(gulp.dest(
-      basePaths.dummies.dest
+      config.dummies.dest
     ))
-    .pipe(connect.reload());
+    .pipe(browserSync.reload({stream:true}));
 });
 
 
 // Task: Handle Sass and CSS
 gulp.task('sass', function () {
-  return gulp.src(appFiles.scss)
+  return gulp.src(config.scss.files)
     .pipe(sass())
     .pipe(gulpif(production, cssmin()))
     .pipe(gulpif(production, rename({
       suffix: '.min'
     })))
     .pipe(gulp.dest(
-      basePaths.scss.dest
+      config.scss.dest
     ))
-    .pipe(connect.reload());
+    .pipe(browserSync.reload({stream:true}));
 });
 
 
-// Task: Pattern Lab
+// Task: patternlab
 // Description: Build static Pattern Lab files via PHP script
 gulp.task('patternlab', function () {
   return gulp.src('', {read: false})
     .pipe(shell([
       'php core/builder.php -gpn'
     ]))
-    .pipe(connect.reload());
+    .pipe(browserSync.reload({stream:true}));
+});
+
+// Task: styleguide
+// Description: Copy Styleguide-Folder from core/ to public
+gulp.task('styleguide', function() {
+  return gulp.src(config.patternlab.styleguide.files)
+    .pipe(gulp.dest(config.patternlab.styleguide.dest));
 });
 
 
-// Task: Server
-// Description: Run web server at localhost:8080
-gulp.task('connect', function() {
-  connect.server({
-    root: 'public',
-    livereload: true
+// task: BrowserSync
+// Description: Run BrowserSync server with disabled ghost mode
+gulp.task('browser-sync', function() {
+  browserSync({
+    server: {
+        baseDir: config.root
+    },
+    ghostMode: true,
+    open: "external"
   });
 });
 
@@ -222,31 +151,37 @@ gulp.task('watch', function () {
 
   // Watch Pattern Lab files
   gulp.watch(
-    appFiles.patternlab,
+    config.patternlab.files,
     ['patternlab']
   );
 
   // Watch scripts
   gulp.watch(
-    appFiles.scripts,
+    config.scripts.files,
     ['scripts']
+  );
+
+  // Dummies
+  gulp.watch(
+    config.dummies.files,
+    ['dummies']
   );
 
   // Watch images
   gulp.watch(
-    appFiles.images,
+    config.images.files,
     ['images']
   );
 
   // Watch Sass
   gulp.watch(
-    appFiles.scss,
+    config.scss.files,
     ['sass']
   );
 
   // Watch fonts
   gulp.watch(
-    appFiles.fonts,
+    config.fonts.files,
     ['fonts']
   );
 });
@@ -259,6 +194,7 @@ gulp.task('default', ['clean:before'], function () {
 
   gulp.start(
     'patternlab',
+    'styleguide',
     'fonts',
     'sass',
     'images',
@@ -274,7 +210,7 @@ gulp.task('serve', function () {
   production = false;
 
   gulp.start(
-    'connect',
+    'browser-sync',
     'default',
     'watch'
   );
@@ -289,16 +225,20 @@ gulp.task('serve', function () {
 // Task: Deploy static content
 // Description: Deploy static content using rsync shell command
 gulp.task('deploy', function () {
-  return gulp.src(deployment.local.path, {read: false})
+  production = true;
+
+  return gulp.src(config.deployment.local.path, {read: false})
     .pipe(shell([
-      'rsync '+ deployment.rsync.options +' '+ deployment.local.path +'/ '+ deployment.remote.host
+      'rsync '+ config.deployment.rsync.options +' '+ config.deployment.local.path +'/ '+ config.deployment.remote.host
     ]))
 });
 
 // Function: Releasing (Bump & Tagging)
 // Description: Bump npm versions, create Git tag and push to origin
 gulp.task('release', function () {
-  return gulp.src(appFiles.versioning)
+  production = true;
+
+  return gulp.src(config.versioning.files)
     .pipe(bump({
       type: gulp.env.type || 'patch'
     }))

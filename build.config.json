@@ -1,4 +1,5 @@
 {
+  "root": "./public",
   "deployment": {
     "local": {
       "path": "public"
@@ -22,7 +23,9 @@
   },
   "scripts": {
     "base"  : "source/assets/javascripts/",
-    "files" : "source/assets/javascripts/**/*.js",
+    "files" : [
+      "source/assets/javascripts/**/*.js"
+    ],
     "dest"  : "public/assets/javascripts/"
   },
   "components": {
@@ -30,26 +33,40 @@
   },
   "scss": {
     "base" : "source/assets/scss/",
-    "files": "source/assets/scss/**/*.scss",
+    "files": [
+      "source/assets/scss/**/*.scss"
+    ],
     "dest" : "public/assets/stylesheets/"
   },
   "fonts": {
     "base" : "source/assets/fonts/",
-    "files": "source/assets/fonts/**/*",
+    "files": [
+      "source/assets/fonts/**/*"
+    ],
     "dest" : "public/assets/fonts/"
   },
   "images": {
     "base" : "source/assets/images/",
-    "files": "source/assets/images/**/*",
+    "files": [
+      "source/assets/images/**/*"
+    ],
     "dest" : "public/assets/images/"
   },
   "dummies": {
     "base" : "source/dummies/",
-    "files": "source/dummies/**/*",
+    "files": [
+      "source/dummies/**/*"
+    ],
     "dest" : "public/dummies/"
   },
   "patternlab": {
-    "files:": [
+    "styleguide": {
+      "files": [
+        "core/styleguide/**"
+      ],
+      "dest": "public/styleguide/"
+    },
+    "files": [
       "source/_patterns/**/*.mustache",
       "source/_patterns/**/*.json",
       "source/_data/*.json"
